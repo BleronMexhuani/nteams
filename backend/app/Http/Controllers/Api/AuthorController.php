@@ -19,7 +19,7 @@ class AuthorController extends Controller
 
     public function store(StoreAuthorRequest $request)
     {
-        $data = $request->validate();
+        $data = $request->validated();
 
         return new AuthorResource($this->service->create($data));
     }

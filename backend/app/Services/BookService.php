@@ -60,20 +60,27 @@ class BookService
 
     private function fetchCoverFromExternalApi(string $isbn): string
     {
-        $cacheKey = "book_cover_{$isbn}";
+        try {
+            $cacheKey = "book_cover_{$isbn}";
+            $cachedCoverUrl = Cache::get($cacheKey);
 
-        return Cache::remember($cacheKey, 3600, function () use ($isbn) {
-            try {
-                $response = Http::get("https://covers.openlibrary.org/b/id/{$isbn}-L.jpg");
-
-                if ($response->failed()) {
-                    throw new BookCoverException("We didn't find ISBN: $isbn");
-                }
-
-                return $response->body();
-            } catch (\Exception $e) {
-                throw new BookCoverException("An error: " . $e->getMessage());
+            if ($cachedCoverUrl) {
+                return $cachedCoverUrl;
             }
-        });
+
+            $coverUrl = "https://covers.openlibrary.org/b/id/{$isbn}-L.jpg";
+
+            $response = Http::get($coverUrl);
+
+            if ($response->failed()) {
+                throw new BookCoverException("We couldn't find a cover for ISBN: $isbn");
+            }
+
+            Cache::put($cacheKey, $coverUrl, now()->addDays(7));
+
+            return $coverUrl;
+        } catch (\Exception $e) {
+            throw new BookCoverException("An error occurred: " . $e->getMessage());
+        }
     }
 }
