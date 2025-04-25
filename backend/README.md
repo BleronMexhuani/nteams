@@ -102,3 +102,24 @@ To run the Pest tests for **Authors** and **Books**, follow these steps:
   ```
   **Description**: Creates a new book with the provided details.
 
+
+- **Update Book**  
+  **Method**: `PUT`  
+  **Endpoint**: `/api/books/{id}`  
+  **Request body**:  
+  ```json
+  {
+    "author_id": 1,
+    "title": "Book Title Updated",
+    "isbn": "123-456-789",
+    "description": "Book description",
+    "published_date": "YYYY-MM-DD",
+    "cover_url": "http://example.com/cover.jpg"
+  }
+  ```
+  **Description**: Updates book with the provided details.
+
+- **Delete Book**  
+  **Method**: `DELETE`  
+  **Endpoint**: `/api/books/{id}`  
+  **Description**: Deletes a specific Book by ID.
